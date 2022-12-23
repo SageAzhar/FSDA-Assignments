@@ -1,0 +1,57 @@
+-- creating table phones
+create or replace table phones( 
+name varchar(20) not null unique, 
+phone_number integer not null unique);
+            
+
+-- creating table calls
+create or replace table calls(
+id integer not null,
+caller integer not null,
+callee integer not null,
+duration integer not null,
+unique(id)
+);
+
+-- inserting data into table phones
+INSERT INTO phones VALUES
+('Jim',1111),
+('kim',2222),
+('mary',3333),
+('jack',4444),
+('mick',5555),
+('buck',6666),
+('jerry',7777),
+('tom',8888),
+('shelly',9999),
+('joyboy',1001);
+
+select * from phones;
+
+-- inserting data into calls table
+INSERT INTO calls VALUES 
+(01,1111,1001,8),
+(45,2222,8888,1),
+(70,3333,8888,3),
+(03,4444,5555,11),
+(06,5555,7777,5),
+(63,6666,2222,6),
+(69,7777,1111,2),
+(12,8888,6666,3),
+(31,9999,1001,4),
+(40,1001,4444,2),
+(88,1111,3333,7),
+(22,2222,9999,2),
+(99,3333,4444,3),
+(07,4444,9999,5);
+
+select * from calls;
+
+select case when sum(B.duration + C.DURATION)>=10 then A.name end as Name
+from phones A
+join calls B on A.phone_number = B.caller
+join calls C on A.phone_number = C.callee
+where B.duration + C.duration >= 10
+group by name
+order by name
+;

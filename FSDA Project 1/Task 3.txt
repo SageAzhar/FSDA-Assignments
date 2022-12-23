@@ -1,0 +1,40 @@
+CREATE TABLE transactions (
+Amount INTEGER NOT NULL,
+Date DATE NOT NULL);
+
+
+INSERT INTO transactions (Amount, Date) VALUES (1000, '2020-01-06');
+INSERT INTO transactions (Amount, Date) VALUES (-10, '2020-01-14');
+INSERT INTO transactions (Amount, Date) VALUES (-75, '2020-01-20');
+INSERT INTO transactions (Amount, Date) VALUES (-5, '2020-01-25');
+INSERT INTO transactions (Amount, Date) VALUES (-4, '2020-01-29');
+INSERT INTO transactions (Amount, Date) VALUES (2000, '2020-03-10');
+INSERT INTO transactions (Amount, Date) VALUES (-75, '2020-03-12');
+INSERT INTO transactions (Amount, Date) VALUES (-200, '2020-10-10');
+INSERT INTO transactions (Amount, Date) VALUES (-20, '2020-03-15');
+INSERT INTO transactions (Amount, Date) VALUES (40, '2020-03-15');
+INSERT INTO transactions (Amount, Date) VALUES (200, '2020-10-10');                                                
+INSERT INTO transactions (Amount, Date) VALUES (-50, '2020-03-17');
+
+select * from transactions;
+select sum(Amount) from transactions;
+
+Select (Sum(Total_TXN_Amount)-((12-Sum(Charges))*5)) as Balance from(
+Select *,
+    case
+    when Transaction_type = 'Credit_card' and TXN_Count>=3 and Total_TXN_Amount <=100 then 1
+    else 0
+    end as Charges
+    from(
+        select month(Date), Sum(Amount) as Total_TXN_Amount, Transaction_type, Count(Transaction_Type) as TXN_Count
+        from(
+            select amount, date,
+            Case when Amount < 0 then 'Credit_card'
+                 when Amount > 0 then 'Deposit'
+                 End As Transaction_type
+            from transactions )
+        as TXN_Table group by month(date),Transaction_type)
+    as Tbl_Charges)
+as Balance_Amount;
+
+
